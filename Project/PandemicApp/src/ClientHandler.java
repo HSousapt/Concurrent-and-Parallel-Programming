@@ -38,7 +38,7 @@ public class ClientHandler implements Runnable{
                 if("quit".equalsIgnoreCase(cmd))
                     return -1;
                 
-                if("register".equalsIgnoreCase(cmd))
+                else if("register".equalsIgnoreCase(cmd))
                 {
                     out.println("chegueeeei!");
                 }

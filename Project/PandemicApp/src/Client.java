@@ -2,31 +2,20 @@ import java.io.*;
 import java.util.*; 
 import java.net.*; 
 
-public class Client {
-
+class ClientWriter implements Runnable{
     
-    public static void help()
-    {
-        System.out.println("To Sign-In type: register");
-        System.out.println("To Log-In write: login");
-        System.out.println("To leave write: quit");
+    private final Socket cs;
+    
+    public ClientWriter(Socket cs) throws IOException {
+        this.cs = cs;
     }
-    
-    public static void main(String[] args) throws IOException{
-        
-        // getting localhost ip 
-        InetAddress ip = InetAddress.getByName("localhost"); 
-        
-        Socket socket = new Socket(ip, 12345);
-        PrintWriter cout = new PrintWriter( socket.getOutputStream(), true);
-        BufferedReader cin = new BufferedReader( new InputStreamReader( socket.getInputStream() ));
-        BufferedReader keyboard = new BufferedReader( new InputStreamReader( System.in ));
-        System.out.println("Connection Established!");
-        System.out.println("type 'help' for help");
-        
-            
-        while(true)
-            {
+    @Override
+    public void run() {
+        try{
+            PrintWriter cout = new PrintWriter( cs.getOutputStream(), true);
+            BufferedReader keyboard = new BufferedReader( new InputStreamReader( System.in ));
+             while(true)
+            {       
                 System.out.print("> ");
                 String command = keyboard.readLine();
                
@@ -34,20 +23,52 @@ public class Client {
                 
                 if(command.equalsIgnoreCase(("quit"))) 
                     break;
-                else if(command.equalsIgnoreCase(("help")))
-                    help();
-                
-                String server_msg = cin.readLine();
-                
-                
-                System.out.println(server_msg);
-            }
-            
-        socket.shutdownInput();
-        socket.shutdownOutput();
-        socket.close();
-        System.out.println("Connection closed!");
-        System.exit(0);
+            }        
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
+}
+
+
+class ClientReader implements Runnable {
+    
+    private final Socket cs;
+    
+    public ClientReader(Socket cs) throws IOException {
+        this.cs = cs;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
+            String s;
+            String[] data;
+            while ((s = in.readLine()) != null) {
+                System.out.println(s);
+            }
+            in.close();
+            cs.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class Client{
+    public static void main(String[] args){
+        try {
+            // getting localhost ip 
+            InetAddress ip = InetAddress.getByName("localhost"); 
+            Socket cs = new Socket(ip, 12345);
+            Thread tWrite = new Thread(new ClientWriter(cs));
+            Thread tRead = new Thread(new ClientReader(cs));
+            tWrite.start();
+            tRead.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
- }
+    }
+}
