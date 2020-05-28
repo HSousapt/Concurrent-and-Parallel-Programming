@@ -5,29 +5,108 @@ import java.net.*;
 class ClientWriter implements Runnable{
     
     private final Socket cs;
+    private PrintWriter out;
+    private BufferedReader keyboard;
     
     public ClientWriter(Socket cs) throws IOException {
         this.cs = cs;
+        this.out = new PrintWriter( cs.getOutputStream(), true);
+        this.keyboard = new BufferedReader( new InputStreamReader( System.in ));
     }
     @Override
     public void run() {
         try{
-            PrintWriter cout = new PrintWriter( cs.getOutputStream(), true);
-            BufferedReader keyboard = new BufferedReader( new InputStreamReader( System.in ));
-             while(true)
-            {       
-                System.out.print("> ");
-                String command = keyboard.readLine();
-               
-                cout.println(command);
-                
-                if(command.equalsIgnoreCase(("quit"))) 
-                    break;
-            }        
-        } catch(IOException e) {
+            while(true)
+            {
+                menu(Menu.MAIN);
+                cs.shutdownInput();
+                break;
+                //System.exit(0);
+            }
+        }catch(IOException e) {
             e.printStackTrace();
         }
     }
+    private void menu(Menu menu)
+    {
+        while(menu != Menu.QUIT)
+        {
+            switch(menu)
+            {
+                case MAIN:
+                    menu = main_menu();
+                    break;
+                case LOGIN:
+                    menu = main_menu();
+                    break;
+                case REGISTER:
+                    menu = main_menu();
+                    break;
+                case UPDATE:
+                    menu = main_menu();
+                    break;
+                case SHOW:
+                    menu = main_menu();
+                    break;
+                case QUIT:
+                    menu = main_menu();
+                    break;                    
+            }
+        }
+    }
+    
+    private void clear_console(int n)
+    {
+        for(int i = 0; i < n; i++)
+            System.out.println("");
+    }
+    
+    private void header()
+    {
+        System.out.println(" ********************************************************* ");
+        System.out.println("|                    PANDEMIC CONTROL                     |");
+        System.out.println(" ********************************************************* ");   
+    }
+    
+    private int read_choice()
+    {
+        clear_console(3);     
+        boolean flag = false;
+        int escolha = 0;
+        while (!flag) {
+            try {
+                System.out.print("> ");  
+                Scanner sc = new Scanner(System.in);
+                escolha = sc.nextInt();
+                flag = true;
+            } catch (InputMismatchException e) {
+                System.out.println("ERROR: UNKOWN COMMAND!");
+            }
+        }
+        return escolha;        
+    }
+    
+    private Menu main_menu()
+    {
+        clear_console(25);
+        header();
+        clear_console(5);
+        System.out.println("1 - LOGIN");
+        System.out.println("2 - REGISTER");
+        System.out.println("0 - QUIT");
+        switch(read_choice())
+        {
+            case 1:
+                return Menu.LOGIN;               
+            case 2:
+                 return Menu.REGISTER;              
+            case 0:
+               return Menu.QUIT;                
+            default:
+                return Menu.MAIN;
+        }
+    }
+    
 }
 
 
@@ -49,7 +128,7 @@ class ClientReader implements Runnable {
                 System.out.println(s);
             }
             in.close();
-            cs.close();
+            this.cs.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
