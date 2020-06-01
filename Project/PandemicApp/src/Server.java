@@ -1,6 +1,27 @@
 import java.io.*; 
 import java.util.*; 
-import java.net.*; 
+import java.net.*;
+
+class ServerWriter implements Runnable{
+    
+}
+
+
+
+
+
+
+
+public class Server
+{
+    
+}
+
+
+
+
+
+/*
 
 public class Server {
 
@@ -44,4 +65,4 @@ public class Server {
             e.printStackTrace();
         }
     }
-}   
+} */

@@ -13,8 +13,10 @@ class ClientWriter implements Runnable{
         this.out = new PrintWriter( cs.getOutputStream(), true);
         this.keyboard = new BufferedReader( new InputStreamReader( System.in ));
     }
+    
     @Override
-    public void run() {
+    public void run()
+    {
         try{
             while(true)
             {
@@ -23,11 +25,11 @@ class ClientWriter implements Runnable{
                 break;
                 //System.exit(0);
             }
-        }catch(IOException e) {
+        }catch(IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-    private void menu(Menu menu)
+    private void menu(Menu menu) throws IOException, InterruptedException
     {
         while(menu != Menu.QUIT)
         {
@@ -37,10 +39,10 @@ class ClientWriter implements Runnable{
                     menu = main_menu();
                     break;
                 case LOGIN:
-                    menu = main_menu();
+                    menu = login();
                     break;
                 case REGISTER:
-                    menu = main_menu();
+                    menu = register();
                     break;
                 case UPDATE:
                     menu = main_menu();
@@ -64,7 +66,7 @@ class ClientWriter implements Runnable{
     private void header()
     {
         System.out.println(" ********************************************************* ");
-        System.out.println("|                    PANDEMIC CONTROL                     |");
+        System.out.println("|                          MENU                           |");
         System.out.println(" ********************************************************* ");   
     }
     
@@ -106,6 +108,43 @@ class ClientWriter implements Runnable{
                 return Menu.MAIN;
         }
     }
+    
+    private Menu login()
+    {
+        clear_console(25);
+        header();
+        System.out.println("|                          LOGIN                          |");
+        System.out.println(" ********************************************************* ");
+
+        return Menu.MAIN;
+    }
+    
+    private Menu register() throws IOException, InterruptedException
+    {
+        clear_console(25);
+        header();
+        clear_console(5);
+        System.out.println("|                        REGISTER                         |");
+        System.out.println(" ********************************************************* ");
+        String user = null, pass = null;
+        boolean accepted = false;
+        while(!accepted)
+        {
+            System.out.print("Type Your Name: ");  
+            System.out.print("> ");
+            user = keyboard.readLine();
+            System.out.print("Type Your Password: ");  
+            System.out.print("> ");
+            pass = keyboard.readLine();
+            
+            System.out.println("register " + user + " " + pass);
+            
+            
+        }
+
+        return Menu.MAIN;
+    }
+            
     
 }
 
