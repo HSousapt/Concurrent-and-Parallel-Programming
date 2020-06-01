@@ -1,3 +1,4 @@
+import Exceptions.ClientExistsException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,10 +12,12 @@ import java.util.logging.Logger;
 public class ClientHandler implements Runnable{
     
     private final Socket clientSocket;
+    private Accounts accs;
     
-    public ClientHandler(Socket clientSocket)
+    public ClientHandler(Socket clientSocket, Accounts accs)
     {
-        this.clientSocket= clientSocket;
+        this.clientSocket = clientSocket;
+        this.accs = accs;
     }
     
     @Override
@@ -24,13 +27,13 @@ public class ClientHandler implements Runnable{
             handleClientSocket(clientSocket);
         } catch (IOException e) {
             e.getStackTrace();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException |  ClientExistsException e) {
             e.getStackTrace();
         }
     }
  
 
-    private int handle_cmds(String[] tokens, PrintWriter out)
+    private int handle_cmds(String[] tokens, PrintWriter out) throws ClientExistsException
     {
             if(tokens != null && tokens.length > 0)
             {
@@ -40,7 +43,10 @@ public class ClientHandler implements Runnable{
                 
                 else if("register".equalsIgnoreCase(cmd))
                 {
-                    out.println("chegueeeei!");
+                    String username =  tokens[1];
+                    String passwrd =  tokens[1];
+                    accs.register(username, passwrd, out);
+                    out.println(username + " you have been registered!!");
                 }
                 else
                 {
@@ -52,7 +58,7 @@ public class ClientHandler implements Runnable{
     }
 
     
-    private void handleClientSocket(Socket cs) throws IOException, InterruptedException
+    private void handleClientSocket(Socket cs) throws IOException, InterruptedException, ClientExistsException
     {
         
         BufferedReader in = new BufferedReader(new InputStreamReader(cs.getInputStream()));    

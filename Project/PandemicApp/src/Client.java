@@ -123,9 +123,9 @@ class ClientWriter implements Runnable{
     {
         clear_console(25);
         header();
-        clear_console(5);
         System.out.println("|                        REGISTER                         |");
         System.out.println(" ********************************************************* ");
+        clear_console(5);
         String user = null, pass = null;
         boolean accepted = false;
         while(!accepted)
@@ -136,8 +136,7 @@ class ClientWriter implements Runnable{
             System.out.print("Type Your Password: ");  
             System.out.print("> ");
             pass = keyboard.readLine();
-            
-            System.out.println("register " + user + " " + pass);
+            out.println("register " + user + " " + pass);
             
             
         }
