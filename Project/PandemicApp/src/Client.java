@@ -1,17 +1,23 @@
 import java.io.*; 
 import java.util.*; 
-import java.net.*; 
+import java.net.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 class ClientWriter implements Runnable{
     
     private final Socket cs;
     private PrintWriter out;
     private BufferedReader keyboard;
+    private String name;
+    BlockingQueue<String> queue;
     
-    public ClientWriter(Socket cs) throws IOException {
+    public ClientWriter(Socket cs, BlockingQueue<String> queue) throws IOException {
         this.cs = cs;
         this.out = new PrintWriter( cs.getOutputStream(), true);
         this.keyboard = new BufferedReader( new InputStreamReader( System.in ));
+        this.queue = queue;
     }
     
     @Override
@@ -23,7 +29,6 @@ class ClientWriter implements Runnable{
                 menu(Menu.MAIN);
                 cs.shutdownInput();
                 break;
-                //System.exit(0);
             }
         }catch(IOException | InterruptedException e) {
             e.printStackTrace();
@@ -43,6 +48,12 @@ class ClientWriter implements Runnable{
                     break;
                 case REGISTER:
                     menu = register();
+                    break;
+                case LOGGED:
+                    menu = logged_menu();
+                    break;
+                case LOGOFF:
+                    menu = logoff();
                     break;
                 case UPDATE:
                     menu = main_menu();
@@ -116,28 +127,38 @@ class ClientWriter implements Runnable{
         System.out.println("|                          LOGIN                          |");
         System.out.println(" ********************************************************* ");
         clear_console(5);
+        String msg;
         boolean login = false;
         String user = null, pass = null;
         while(!login)
         {
             System.out.print("Type Your Name: ");  
             System.out.print("> ");
-            user = keyboard.readLine();
+            this.name = keyboard.readLine();
             System.out.print("Type Your Password: ");  
             System.out.print("> ");
             pass = keyboard.readLine();
-            out.println("Login " + user + " " + pass);    
+            out.println("Login " + this.name + " " + pass);    
             login = true;
         }
-        int escolha = read_choice();
-        switch (escolha)
+        msg = queue.poll(5, TimeUnit.SECONDS);
+        
+        if(msg.equals("OK"))
+        {    
+            return Menu.LOGGED;
+        }
+        else
         {
-            case 0:
-                return Menu.QUIT;
-            case 1:
-                return Menu.MAIN;
-            default:
-                return Menu.LOGIN;
+            int choice = read_choice();
+            switch (choice)
+            {
+                case 0:
+                    return Menu.QUIT;
+                case 1:
+                    return Menu.MAIN;
+                default:
+                    return Menu.LOGIN;
+            }         
         }
     }
     
@@ -172,7 +193,46 @@ class ClientWriter implements Runnable{
                 return Menu.REGISTER;
         }
     }
+
+    private Menu logged_menu()
+    {
+        header();
+        System.out.println("|            1 - Show | 2 - Update | 0 - Logoff           |");
+        System.out.println(" ********************************************************* ");
+        
+        int escolha = read_choice();
+        switch (escolha)
+        {
+            case 0:
+                return Menu.LOGOFF;
+            case 1:
+                return Menu.SHOW;
+            default:
+                return Menu.UPDATE;
+        }        
+    }
+    
+    private Menu logoff() throws InterruptedException
+    {
+        out.println("logoff " + this.name);
+        String msg = queue.poll(5, TimeUnit.SECONDS);
+        if(msg.equalsIgnoreCase("OK"))
+        {
+            int escolha = read_choice();
+            switch (escolha)
+            {
+                case 0:
+                    return Menu.QUIT;
+                case 1:
+                    return Menu.MAIN;
+                default:
+                    return Menu.UPDATE;
+            }    
+        }
+        else
+            return Menu.MAIN;
             
+    }
     
 }
 
@@ -180,9 +240,11 @@ class ClientWriter implements Runnable{
 class ClientReader implements Runnable {
     
     private final Socket cs;
+    BlockingQueue<String> queue;
     
-    public ClientReader(Socket cs) throws IOException {
+    public ClientReader(Socket cs, BlockingQueue<String> queue) throws IOException {
         this.cs = cs;
+        this. queue = queue;
     }
     
     @Override
@@ -190,7 +252,6 @@ class ClientReader implements Runnable {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
             String s;
-            String[] data;
             while ((s = in.readLine()) != null) {
                 handle_reply(s);
             }
@@ -203,6 +264,7 @@ class ClientReader implements Runnable {
     
     public void handle_reply(String reply)
     {
+        try{
         String[] tokens = reply.split(" ");
         switch(tokens[0])
         {
@@ -220,7 +282,37 @@ class ClientReader implements Runnable {
                     System.out.println(" ********************************************************* ");
                     System.out.println("|              1 - Previous menu | 0 - Quit               |");
                     System.out.println(" ********************************************************* ");   
-                }  
+                }
+                break;
+            case "L":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println("WELCOME " + tokens[2] + " -> you are now logged on!");
+                    queue.put("OK");
+                }
+                else
+                {
+                    System.out.println(reply.substring(6, reply.length()));
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|              1 - Previous menu | 0 - Quit               |");
+                    System.out.println(" ********************************************************* ");
+                    queue.put("NOT");
+                }
+                break;
+            case "O":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println(tokens[2] + " you have successfully logged off!");
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|                1 - Main menu | 0 - Quit                 |");
+                    System.out.println(" ********************************************************* ");
+                    queue.put("OK");                
+                }
+                break;
+        }
+        }catch(InterruptedException e)
+        {
+            e.printStackTrace();
         }
     }
 }
@@ -231,8 +323,9 @@ public class Client{
             // getting localhost ip 
             InetAddress ip = InetAddress.getByName("localhost"); 
             Socket cs = new Socket(ip, 12345);
-            Thread tWrite = new Thread(new ClientWriter(cs));
-            Thread tRead = new Thread(new ClientReader(cs));
+            BlockingQueue<String> queue = new ArrayBlockingQueue<String>(200);
+            Thread tWrite = new Thread(new ClientWriter(cs, queue));
+            Thread tRead = new Thread(new ClientReader(cs, queue));
             tWrite.start();
             tRead.start();
         } catch (IOException e) {

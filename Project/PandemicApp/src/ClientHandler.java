@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class ClientHandler implements Runnable{
     
@@ -54,7 +50,12 @@ public class ClientHandler implements Runnable{
             out.println("L NOT " + e.getMessage());
         }
     }
- 
+    
+    void log_off(String username, PrintWriter out)
+    {
+       accs.logoff(username);
+       out.println("O OK " + username);
+    }
 
     private int handle_cmds(String[] tokens, PrintWriter out) throws ClientExistsException
     {
@@ -75,6 +76,10 @@ public class ClientHandler implements Runnable{
                     String username =  tokens[1];
                     String passwrd =  tokens[2];
                     log(username, passwrd, out);                    
+                }
+                else if("logoff".equalsIgnoreCase(cmd))
+                {
+                    log_off(tokens[1], out);
                 }
                 else
                 {

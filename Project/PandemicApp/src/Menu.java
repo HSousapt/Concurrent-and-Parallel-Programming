@@ -4,5 +4,7 @@ enum Menu {
     REGISTER,
     UPDATE,
     SHOW,
+    LOGOFF,
+    LOGGED,
     QUIT;
 }

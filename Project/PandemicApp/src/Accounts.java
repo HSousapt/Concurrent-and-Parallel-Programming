@@ -62,4 +62,14 @@ public class Accounts {
             this.lock.unlock();
         }
     }
+    
+    public void logoff(String username)
+    {
+        this.lock.lock();
+        try{
+            this.logged_users.remove(this.users.get(username).getId());
+        }finally{
+            this.lock.unlock();
+        }
+    }
 }
