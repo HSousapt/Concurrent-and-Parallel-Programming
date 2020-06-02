@@ -62,6 +62,21 @@ public class ClientHandler implements Runnable{
         int cases = accs.known_cases(username);
         out.println("S OK " + username + " " + cases);
     }
+    
+    void update_cases(String username, String cases, PrintWriter out)
+    {
+        int new_cases;
+        try 
+        {
+            new_cases = Integer.parseInt(cases);
+        }
+        catch (NumberFormatException e)
+        {
+            new_cases = 0;
+        }
+        accs.update(username, new_cases);
+        out.println("U OK");
+    }
 
     private int handle_cmds(String[] tokens, PrintWriter out) throws ClientExistsException
     {
@@ -90,6 +105,14 @@ public class ClientHandler implements Runnable{
                 else if("show".equalsIgnoreCase(cmd))
                 {
                     show(tokens[1], out);
+                }
+                else if("update".equalsIgnoreCase(cmd))
+                {
+                    update_cases(tokens[1], tokens[2], out);
+                }
+                else if("broadcast".equalsIgnoreCase(cmd))
+                {
+                    accs.multicast();
                 }
                 else
                 {

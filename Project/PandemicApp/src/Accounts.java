@@ -7,17 +7,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Accounts {
     
-    private HashMap<String, User> users;
-    private HashMap<Integer, User> logged_users;
+    private final Hashtable<String, User> users;
+    private final Hashtable<Integer, User> logged_users;
     private Lock lock;
     private int userIds;
     
     public Accounts()
     {
-        this.users = new HashMap<>();
+        this.users = new Hashtable<>();
         this.lock = new ReentrantLock();
         this.userIds = 0;
-        this.logged_users = new HashMap<>();
+        this.logged_users = new Hashtable<>();
     }
     
     public void register(String username, String password, PrintWriter writer) throws ClientExistsException
@@ -84,5 +84,42 @@ public class Accounts {
         }
         
         return cases;
+    }
+    
+    public void update(String username, int cases)
+    {
+        this.lock.lock();
+        try{
+            this.logged_users.get(this.users.get(username).getId()).setCases(cases);
+            System.out.println(this.logged_users.get(this.users.get(username).getId()).getCases());
+        }finally{
+            this.lock.unlock();
+        }       
+    }
+    
+    public void multicast()
+    {
+        int quant;
+        this.lock.lock();
+        try{
+            List<String> user_names = new ArrayList<>(this.users.keySet());
+            int n_users = user_names.size();
+            double total = 0;
+            for (Map.Entry<String, User> pair : this.users.entrySet()) {
+                User u = pair.getValue();
+                total += u.getCases();
+            }
+            
+            double average = total/(n_users * 150);
+            String message = "M OK Current average of infected people -> " + average;
+            for(User user : this.logged_users.values())
+            {
+                PrintWriter out = user.getWritter();
+                out.print(message);
+                out.flush();
+            }
+        }finally{
+            this.lock.unlock();
+        }      
     }
 }

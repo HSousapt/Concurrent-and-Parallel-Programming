@@ -56,7 +56,7 @@ class ClientWriter implements Runnable{
                     menu = logoff();
                     break;
                 case UPDATE:
-                    menu = main_menu();
+                    menu = update_menu();
                     break;
                 case SHOW:
                     menu = show();
@@ -236,7 +236,7 @@ class ClientWriter implements Runnable{
     
     private Menu show() throws InterruptedException
     {
-        out.println(this.name);
+        out.println("show " + this.name);
         String msg = queue.poll(5, TimeUnit.SECONDS);
         if(msg.equalsIgnoreCase("OK"))
         {
@@ -255,6 +255,32 @@ class ClientWriter implements Runnable{
             return Menu.LOGGED;
     }
     
+    private Menu update_menu() throws IOException, InterruptedException
+    {
+        String new_cases = null;
+        System.out.print("Type Your Known Cases > "); 
+        new_cases = keyboard.readLine();
+        out.println("update " + this.name + " " + new_cases);
+        String msg = queue.poll(5, TimeUnit.SECONDS);
+        if(msg.equalsIgnoreCase("OK"))
+        {
+           out.println("broadcast");
+           String msg2 = queue.poll(5, TimeUnit.SECONDS);
+           if(msg2.equalsIgnoreCase("OK"))
+           {
+                int escolha = read_choice();
+                switch (escolha)
+                {
+                    case 0:
+                        return Menu.QUIT;
+                    case 1:
+                        return Menu.LOGGED;
+                    default:
+                }        return Menu.LOGGED;
+           }   
+        }
+        return Menu.LOGGED;
+    }
 }
 
 
@@ -335,9 +361,29 @@ class ClientReader implements Runnable {
                 {
                     System.out.println(tokens[2] + " you know " + tokens[3] + " cases!!!");
                     System.out.println(" ********************************************************* ");
-                    System.out.println("|           Any key - Previous menu | 0 - Quit            |");
+                    System.out.println("|           Any num - Previous menu | 0 - Quit            |");
                     System.out.println(" ********************************************************* ");
                     queue.put("OK");                
+                }
+                break;
+            case "U":
+                if(tokens[1].equals("OK"))
+                {
+                    queue.put("OK");                
+                }
+                break;
+            case "M":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println(reply.substring(5, reply.length()));
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|           Any num - Previous menu | 0 - Quit            |");
+                    System.out.println(" ********************************************************* ");
+                    queue.put("OK");                
+                }
+                else
+                {
+                   System.out.println("passei aqui 2"); 
                 }
                 break;
         }
