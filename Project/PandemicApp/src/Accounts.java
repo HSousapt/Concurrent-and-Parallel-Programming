@@ -72,4 +72,17 @@ public class Accounts {
             this.lock.unlock();
         }
     }
+    
+    public int known_cases(String username)
+    {
+        int cases;
+        this.lock.lock();
+        try{
+            cases = (this.logged_users.get(this.users.get(username).getId()).getCases());
+        }finally{
+            this.lock.unlock();
+        }
+        
+        return cases;
+    }
 }

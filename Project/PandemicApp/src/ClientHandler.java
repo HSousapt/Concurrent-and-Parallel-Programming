@@ -56,6 +56,12 @@ public class ClientHandler implements Runnable{
        accs.logoff(username);
        out.println("O OK " + username);
     }
+    
+    void show(String username, PrintWriter out)
+    {
+        int cases = accs.known_cases(username);
+        out.println("S OK " + username + " " + cases);
+    }
 
     private int handle_cmds(String[] tokens, PrintWriter out) throws ClientExistsException
     {
@@ -80,6 +86,10 @@ public class ClientHandler implements Runnable{
                 else if("logoff".equalsIgnoreCase(cmd))
                 {
                     log_off(tokens[1], out);
+                }
+                else if("show".equalsIgnoreCase(cmd))
+                {
+                    show(tokens[1], out);
                 }
                 else
                 {

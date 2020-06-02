@@ -59,7 +59,7 @@ class ClientWriter implements Runnable{
                     menu = main_menu();
                     break;
                 case SHOW:
-                    menu = main_menu();
+                    menu = show();
                     break;
                 case QUIT:
                     menu = main_menu();
@@ -234,6 +234,27 @@ class ClientWriter implements Runnable{
             
     }
     
+    private Menu show() throws InterruptedException
+    {
+        out.println(this.name);
+        String msg = queue.poll(5, TimeUnit.SECONDS);
+        if(msg.equalsIgnoreCase("OK"))
+        {
+            int escolha = read_choice();
+            switch (escolha)
+            {
+                case 0:
+                    return Menu.QUIT;
+                case 1:
+                    return Menu.LOGGED;
+                default:
+                    return Menu.LOGGED;
+            }    
+        }
+        else
+            return Menu.LOGGED;
+    }
+    
 }
 
 
@@ -309,6 +330,16 @@ class ClientReader implements Runnable {
                     queue.put("OK");                
                 }
                 break;
+            case "S":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println(tokens[2] + " you know " + tokens[3] + " cases!!!");
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|           Any key - Previous menu | 0 - Quit            |");
+                    System.out.println(" ********************************************************* ");
+                    queue.put("OK");                
+                }
+                break;
         }
         }catch(InterruptedException e)
         {
@@ -323,7 +354,7 @@ public class Client{
             // getting localhost ip 
             InetAddress ip = InetAddress.getByName("localhost"); 
             Socket cs = new Socket(ip, 12345);
-            BlockingQueue<String> queue = new ArrayBlockingQueue<String>(200);
+            BlockingQueue<String> queue = new ArrayBlockingQueue<>(200);
             Thread tWrite = new Thread(new ClientWriter(cs, queue));
             Thread tRead = new Thread(new ClientReader(cs, queue));
             tWrite.start();
