@@ -1,4 +1,5 @@
 import Exceptions.ClientExistsException;
+import Exceptions.InexistentUserException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,6 +32,28 @@ public class ClientHandler implements Runnable{
             e.getStackTrace();
         }
     }
+    
+    void regist(String username, String password, PrintWriter out) throws ClientExistsException
+    {
+        try{
+            accs.register(username, password, out);
+            out.println("R OK " + username);
+        }catch(ClientExistsException e)
+        {
+                out.println("R NOT " + e.getMessage());
+        }
+    }
+    
+    void log(String username, String password, PrintWriter out) throws InexistentUserException
+    {
+        try{
+            accs.login(username, password, out);
+            out.println("L OK " + username);
+        }catch(InexistentUserException e)
+        {
+            out.println("L NOT " + e.getMessage());
+        }
+    }
  
 
     private int handle_cmds(String[] tokens, PrintWriter out) throws ClientExistsException
@@ -44,9 +67,14 @@ public class ClientHandler implements Runnable{
                 else if("register".equalsIgnoreCase(cmd))
                 {
                     String username =  tokens[1];
-                    String passwrd =  tokens[1];
-                    accs.register(username, passwrd, out);
-                    out.println(username + " you have been registered!!");
+                    String passwrd =  tokens[2];
+                    regist(username, passwrd, out);
+                }
+                else if("login".equalsIgnoreCase(cmd))
+                {
+                    String username =  tokens[1];
+                    String passwrd =  tokens[2];
+                    log(username, passwrd, out);                    
                 }
                 else
                 {

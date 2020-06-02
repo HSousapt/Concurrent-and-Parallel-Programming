@@ -109,14 +109,36 @@ class ClientWriter implements Runnable{
         }
     }
     
-    private Menu login()
+    private Menu login() throws IOException, InterruptedException
     {
         clear_console(25);
         header();
         System.out.println("|                          LOGIN                          |");
         System.out.println(" ********************************************************* ");
-
-        return Menu.MAIN;
+        clear_console(5);
+        boolean login = false;
+        String user = null, pass = null;
+        while(!login)
+        {
+            System.out.print("Type Your Name: ");  
+            System.out.print("> ");
+            user = keyboard.readLine();
+            System.out.print("Type Your Password: ");  
+            System.out.print("> ");
+            pass = keyboard.readLine();
+            out.println("Login " + user + " " + pass);    
+            login = true;
+        }
+        int escolha = read_choice();
+        switch (escolha)
+        {
+            case 0:
+                return Menu.QUIT;
+            case 1:
+                return Menu.MAIN;
+            default:
+                return Menu.LOGIN;
+        }
     }
     
     private Menu register() throws IOException, InterruptedException
@@ -137,11 +159,18 @@ class ClientWriter implements Runnable{
             System.out.print("> ");
             pass = keyboard.readLine();
             out.println("register " + user + " " + pass);
-            
-            
+            accepted = true;
         }
-
-        return Menu.MAIN;
+        int escolha = read_choice();
+        switch (escolha)
+        {
+            case 0:
+                return Menu.QUIT;
+            case 1:
+                return Menu.MAIN;
+            default:
+                return Menu.REGISTER;
+        }
     }
             
     
@@ -163,12 +192,35 @@ class ClientReader implements Runnable {
             String s;
             String[] data;
             while ((s = in.readLine()) != null) {
-                System.out.println(s);
+                handle_reply(s);
             }
             in.close();
             this.cs.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public void handle_reply(String reply)
+    {
+        String[] tokens = reply.split(" ");
+        switch(tokens[0])
+        {
+            case "R":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println(tokens[2] + " -> you have been registered successfully!");
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|              1 - Previous menu | 0 - Quit               |");
+                    System.out.println(" ********************************************************* ");   
+                }
+                else
+                {
+                    System.out.println(reply.substring(6, reply.length()));
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|              1 - Previous menu | 0 - Quit               |");
+                    System.out.println(" ********************************************************* ");   
+                }  
         }
     }
 }

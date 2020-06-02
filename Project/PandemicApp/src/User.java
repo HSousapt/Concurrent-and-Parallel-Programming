@@ -6,14 +6,16 @@ public class User {
     private int cases;
     private boolean logged;
     private PrintWriter out;
+    private int id;
     
-    public User(String user, String pass, PrintWriter out)
+    public User(String user, String pass, PrintWriter out, int user_id)
     {
         this.username = user;
         this.password = pass;
         this.out = out;
         this.cases = 0;
         this.logged = false;
+        this.id = user_id;
     }
     
     public int getCases()
@@ -64,5 +66,10 @@ public class User {
     public void setPass(String pswd)
     {
         this.password = pswd;
+    }
+    
+    public int getId()
+    {
+        return this.id;
     }
 }
