@@ -197,7 +197,7 @@ class ClientWriter implements Runnable{
     private Menu logged_menu()
     {
         header();
-        System.out.println("|            1 - Show | 2 - Update | 0 - Logoff           |");
+        System.out.println("|            1 - Show | 2 - Update | 0 - Log Out           |");
         System.out.println(" ********************************************************* ");
         
         int escolha = read_choice();
@@ -244,7 +244,7 @@ class ClientWriter implements Runnable{
             switch (escolha)
             {
                 case 0:
-                    return Menu.QUIT;
+                    return Menu.LOGOFF;
                 default:
                     return Menu.LOGGED;
             }    
@@ -264,13 +264,13 @@ class ClientWriter implements Runnable{
         {
             out.println("broadcast");
             System.out.println(" ********************************************************* ");
-            System.out.println("|           Any num - Previous menu | 0 - Log-out         |");
+            System.out.println("|           Any num - Previous menu | 0 - Log Out         |");
             System.out.println(" ********************************************************* ");  
             int escolha = read_choice();
             switch (escolha)
             {
                 case 0:
-                    return Menu.QUIT;
+                    return Menu.LOGOFF;
                 default:
             }       return Menu.LOGGED;
         }   
@@ -356,7 +356,7 @@ class ClientReader implements Runnable {
                 {
                     System.out.println(tokens[2] + " you know " + tokens[3] + " cases!!!");
                     System.out.println(" ********************************************************* ");
-                    System.out.println("|           Any num - Previous menu | 0 - Quit            |");
+                    System.out.println("|          Any num - Previous menu | 0 - Log Out          |");
                     System.out.println(" ********************************************************* ");
                     queue.put("OK");                
                 }

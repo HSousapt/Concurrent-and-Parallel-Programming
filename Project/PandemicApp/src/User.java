@@ -4,7 +4,7 @@ public class User {
     private String username;
     private String password;
     private int cases;
-    private boolean logged;
+    private boolean flag;
     private PrintWriter out;
     private int id;
     
@@ -14,7 +14,7 @@ public class User {
         this.password = pass;
         this.out = out;
         this.cases = 0;
-        this.logged = false;
+        this.flag = false;
         this.id = user_id;
     }
     
@@ -43,14 +43,14 @@ public class User {
         return this.password;
     }
     
-    public boolean isLogged()
+    public boolean getFlag()
     {
-        return this.logged;
+        return this.flag;
     }
     
-    public void setLog(boolean islogged)
+    public void setFlag(boolean f)
     {
-        this.logged = islogged;
+        this.flag = f;
     }
     
     public PrintWriter getWritter()

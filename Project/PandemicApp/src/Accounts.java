@@ -71,7 +71,8 @@ public class Accounts {
     {
         this.lock.lock();
         try{
-            this.logged_users.remove(this.users.get(username).getId());
+            int id = this.users.get(username).getId();
+            this.logged_users.remove(id);
         }finally{
             this.lock.unlock();
         }
@@ -98,17 +99,21 @@ public class Accounts {
         }       
     }
     
-    public void multicast()
+    public void multicast(String name)
     {
-        int quant;
         this.lock.lock();
         try{
             List<String> user_names = new ArrayList<>(this.users.keySet());
-            int n_users = user_names.size();
+            int n_users = 0;
             double total = 0;
+            this.users.get(name).setFlag(true);
             for (Map.Entry<String, User> pair : this.users.entrySet()) {
                 User u = pair.getValue();
                 total += u.getCases();
+                if(u.getFlag()==true)
+                {
+                    n_users += 1;
+                }
             }
             
             double average = total/(n_users * 150);
