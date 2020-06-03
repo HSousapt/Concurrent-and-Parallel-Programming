@@ -22,17 +22,15 @@ public class Server {
                 //Server socket accepts incoming request
                 System.out.println("Waiting for client connection...");
                 cs = ss.accept();
-                System.out.println("New connection: " + cs.getInetAddress().getHostAddress());
-                
-                ClientHandler handler = new ClientHandler(cs, accs);
-                
-                Thread t_handler = new Thread(handler);
-                
+                System.out.println("New connection: " + cs.getInetAddress().getHostAddress());               
+                ClientHandler handler = new ClientHandler(cs, accs);               
+                Thread t_handler = new Thread(handler);                
                 t_handler.start();
 
             }
         }catch(IOException e)
         {
+            System.out.println("fodasse");
             e.printStackTrace();
         }
     }

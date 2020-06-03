@@ -245,8 +245,6 @@ class ClientWriter implements Runnable{
             {
                 case 0:
                     return Menu.QUIT;
-                case 1:
-                    return Menu.LOGGED;
                 default:
                     return Menu.LOGGED;
             }    
@@ -264,21 +262,18 @@ class ClientWriter implements Runnable{
         String msg = queue.poll(5, TimeUnit.SECONDS);
         if(msg.equalsIgnoreCase("OK"))
         {
-           out.println("broadcast");
-           String msg2 = queue.poll(5, TimeUnit.SECONDS);
-           if(msg2.equalsIgnoreCase("OK"))
-           {
-                int escolha = read_choice();
-                switch (escolha)
-                {
-                    case 0:
-                        return Menu.QUIT;
-                    case 1:
-                        return Menu.LOGGED;
-                    default:
-                }        return Menu.LOGGED;
-           }   
-        }
+            out.println("broadcast");
+            System.out.println(" ********************************************************* ");
+            System.out.println("|           Any num - Previous menu | 0 - Log-out         |");
+            System.out.println(" ********************************************************* ");  
+            int escolha = read_choice();
+            switch (escolha)
+            {
+                case 0:
+                    return Menu.QUIT;
+                default:
+            }       return Menu.LOGGED;
+        }   
         return Menu.LOGGED;
     }
 }
@@ -334,7 +329,7 @@ class ClientReader implements Runnable {
             case "L":
                 if(tokens[1].equals("OK"))
                 {
-                    System.out.println("WELCOME " + tokens[2] + " -> you are now logged on!");
+                    System.out.println("WELCOME " + tokens[2] + " -> YOU ARE NOW LOGGED IN!");
                     queue.put("OK");
                 }
                 else
@@ -375,15 +370,7 @@ class ClientReader implements Runnable {
             case "M":
                 if(tokens[1].equals("OK"))
                 {
-                    System.out.println(reply.substring(5, reply.length()));
-                    System.out.println(" ********************************************************* ");
-                    System.out.println("|           Any num - Previous menu | 0 - Quit            |");
-                    System.out.println(" ********************************************************* ");
-                    queue.put("OK");                
-                }
-                else
-                {
-                   System.out.println("passei aqui 2"); 
+                    System.out.println(reply.substring(5, reply.length()));            
                 }
                 break;
         }

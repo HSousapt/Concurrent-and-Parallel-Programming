@@ -109,11 +109,12 @@ public class ClientHandler implements Runnable{
                 else if("update".equalsIgnoreCase(cmd))
                 {
                     update_cases(tokens[1], tokens[2], out);
-                }
-                else if("broadcast".equalsIgnoreCase(cmd))
-                {
                     accs.multicast();
                 }
+                /*else if("broadcast".equalsIgnoreCase(cmd))
+                {
+                    accs.multicast();
+                }*/
                 else
                 {
                     String unkown = "ERROR! Unknown command: " + cmd;

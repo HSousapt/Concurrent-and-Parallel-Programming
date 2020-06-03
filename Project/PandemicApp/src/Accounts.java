@@ -55,7 +55,11 @@ public class Accounts {
         this.lock.lock();
         try{
             if(log_user(username, password, writer) == true)
-                this.logged_users.put(this.userIds, this.users.get(username));
+            {
+                int id = this.users.get(username).getId();
+                User u = this.users.get(username);
+                this.logged_users.put(id, u);
+            }
             else
                 throw new InexistentUserException("Incorrect Password! or Not Registered User!");
         }finally {
@@ -75,15 +79,13 @@ public class Accounts {
     
     public int known_cases(String username)
     {
-        int cases;
         this.lock.lock();
         try{
-            cases = (this.logged_users.get(this.users.get(username).getId()).getCases());
+            return (this.logged_users.get(this.users.get(username).getId()).getCases());
         }finally{
             this.lock.unlock();
-        }
-        
-        return cases;
+        }   
+
     }
     
     public void update(String username, int cases)
@@ -91,7 +93,6 @@ public class Accounts {
         this.lock.lock();
         try{
             this.logged_users.get(this.users.get(username).getId()).setCases(cases);
-            System.out.println(this.logged_users.get(this.users.get(username).getId()).getCases());
         }finally{
             this.lock.unlock();
         }       
@@ -115,7 +116,7 @@ public class Accounts {
             for(User user : this.logged_users.values())
             {
                 PrintWriter out = user.getWritter();
-                out.print(message);
+                out.println(message);
                 out.flush();
             }
         }finally{
