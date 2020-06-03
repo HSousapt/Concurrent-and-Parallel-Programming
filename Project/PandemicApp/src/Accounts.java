@@ -11,6 +11,7 @@ public class Accounts {
     private final Hashtable<Integer, User> logged_users;
     private Lock lock;
     private int userIds;
+    private double average;
     
     public Accounts()
     {
@@ -18,6 +19,7 @@ public class Accounts {
         this.lock = new ReentrantLock();
         this.userIds = 0;
         this.logged_users = new Hashtable<>();
+        this.average = 0.0;
     }
     
     public void register(String username, String password, PrintWriter writer) throws ClientExistsException
@@ -86,7 +88,16 @@ public class Accounts {
         }finally{
             this.lock.unlock();
         }   
-
+    }
+    
+     public double get_average(String username)
+    {
+        this.lock.lock();
+        try{
+            return this.average;
+        }finally{
+            this.lock.unlock();
+        }   
     }
     
     public void update(String username, int cases)
@@ -116,8 +127,9 @@ public class Accounts {
                 }
             }
             
-            double average = total/(n_users * 150);
-            String message = "M OK Current average of infected people -> " + average;
+            double av = total/(n_users * 150);
+            this.average = av;
+            String message = "M OK Current average of infected people -> " + av;
             for(User user : this.logged_users.values())
             {
                 PrintWriter out = user.getWritter();

@@ -234,13 +234,33 @@ class ClientWriter implements Runnable{
             
     }
     
+    private void show_options()
+    {
+        System.out.println(" ********************************************************* ");
+        System.out.println("|  1 - People You Know | 2 - Average | 0 - Previous Menu  |");
+        System.out.println(" ********************************************************* "); 
+    }
+    
     private Menu show() throws InterruptedException
     {
-        out.println("show " + this.name);
+        show_options();
+        int escolha = read_choice();
+        switch(escolha)
+        {
+            case 0:
+                return Menu.LOGGED;      
+            case 1:
+                out.println("show " + this.name);
+                break;
+            case 2:                 
+                out.println("average " + this.name);  
+                break;
+        }
+        
         String msg = queue.poll(5, TimeUnit.SECONDS);
         if(msg.equalsIgnoreCase("OK"))
         {
-            int escolha = read_choice();
+            escolha = read_choice();
             switch (escolha)
             {
                 case 0:
@@ -361,6 +381,16 @@ class ClientReader implements Runnable {
                     queue.put("OK");                
                 }
                 break;
+            case "A":
+                if(tokens[1].equals("OK"))
+                {
+                    System.out.println("The current average proportion of infected is: " + tokens[3]);
+                    System.out.println(" ********************************************************* ");
+                    System.out.println("|          Any num - Previous menu | 0 - Log Out          |");
+                    System.out.println(" ********************************************************* ");
+                    queue.put("OK");                
+                }
+                break;                
             case "U":
                 if(tokens[1].equals("OK"))
                 {

@@ -63,6 +63,12 @@ public class ClientHandler implements Runnable{
         out.println("S OK " + username + " " + cases);
     }
     
+    void average(String username, PrintWriter out)
+    {
+        double average = accs.get_average(username);
+        out.println("A OK " + username + " " + average);
+    }
+    
     void update_cases(String username, String cases, PrintWriter out)
     {
         int new_cases;
@@ -105,6 +111,10 @@ public class ClientHandler implements Runnable{
                 else if("show".equalsIgnoreCase(cmd))
                 {
                     show(tokens[1], out);
+                }
+                else if("average".equalsIgnoreCase(cmd))
+                {
+                    average(tokens[1], out);
                 }
                 else if("update".equalsIgnoreCase(cmd))
                 {
