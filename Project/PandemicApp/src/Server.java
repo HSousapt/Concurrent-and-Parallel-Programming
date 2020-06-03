@@ -1,12 +1,7 @@
 import java.io.*; 
-import java.util.*; 
 import java.net.*;
 
-public class Server {
-
-    static HashMap<String, Integer> registered_clients = new HashMap<>();
-    static HashMap<Integer, ClientHandler> logged_clients;
-    
+public class Server {    
     public static void main(String[] args) throws IOException{
         
         //Opening server socket on port 12345

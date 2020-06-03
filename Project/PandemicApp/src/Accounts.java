@@ -104,6 +104,8 @@ public class Accounts {
     {
         this.lock.lock();
         try{
+            if(cases < 0)
+                cases = 0;
             this.logged_users.get(this.users.get(username).getId()).setCases(cases);
         }finally{
             this.lock.unlock();
