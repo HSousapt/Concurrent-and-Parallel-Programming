@@ -282,7 +282,6 @@ class ClientWriter implements Runnable{
         String msg = queue.poll(5, TimeUnit.SECONDS);
         if(msg.equalsIgnoreCase("OK"))
         {
-            out.println("broadcast");
             System.out.println(" ********************************************************* ");
             System.out.println("|           Any num - Previous menu | 0 - Log Out         |");
             System.out.println(" ********************************************************* ");  

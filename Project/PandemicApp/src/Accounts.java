@@ -107,6 +107,7 @@ public class Accounts {
             if(cases < 0)
                 cases = 0;
             this.logged_users.get(this.users.get(username).getId()).setCases(cases);
+            multicast(username);
         }finally{
             this.lock.unlock();
         }       
@@ -114,8 +115,6 @@ public class Accounts {
     
     public void multicast(String name)
     {
-        this.lock.lock();
-        try{
             List<String> user_names = new ArrayList<>(this.users.keySet());
             int n_users = 0;
             double total = 0;
@@ -137,9 +136,6 @@ public class Accounts {
                 PrintWriter out = user.getWritter();
                 out.println(message);
                 out.flush();
-            }
-        }finally{
-            this.lock.unlock();
-        }      
+            }   
     }
 }

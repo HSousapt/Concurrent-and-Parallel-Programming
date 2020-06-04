@@ -119,7 +119,7 @@ public class ClientHandler implements Runnable{
                 else if("update".equalsIgnoreCase(cmd))
                 {
                     update_cases(tokens[1], tokens[2], out);
-                    accs.multicast(tokens[1]);
+                    //accs.multicast(tokens[1]);
                 }
                 else
                 {
